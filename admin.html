@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>एडमिन पैनल - प्रोडक्ट जोड़ें</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f4f6f8; color: #333; padding: 20px; padding-bottom: 50px; }
+        .admin-header { text-align: center; margin-bottom: 25px; }
+        .admin-header h1 { font-size: 22px; color: #9f2089; }
+        .form-container { background-color: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #555; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #9f2089; box-shadow: 0 0 5px rgba(159, 32, 137, 0.2); }
+        .optional-images input { margin-bottom: 8px; background-color: #fafafa; }
+        .price-row { display: flex; gap: 15px; }
+        .price-row .form-group { flex: 1; }
+        .submit-btn { width: 100%; background-color: #9f2089; color: #fff; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .submit-btn:active { background-color: #7a1869; }
+        .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-header">
+        <h1><i class="fas fa-user-shield"></i> स्टोर एडमिन पैनल</h1>
+        <p style="font-size: 13px; color: #777; margin-top: 5px;">यहाँ से अपनी वेबसाइट पर नए प्रोडक्ट डालें</p>
+    </div>
+
+    <div class="form-container">
+        <form id="addProductForm">
+            
+            <div class="form-group">
+                <label>प्रोडक्ट कोड / ID (URL के लिए) *</label>
+                <input type="text" id="productId" placeholder="जैसे: p-101 या s-3429" required>
+            </div>
+
+            <div class="form-group">
+                <label>प्रोडक्ट का नाम (Title) *</label>
+                <input type="text" id="productName" placeholder="जैसे: TRX आकर्षक 5 पीस बालियां" required>
+            </div>
+
+            <div class="form-group">
+                <label>मुख्य फोटो का लिंक (Main Photo) *</label>
+                <input type="url" id="productImage1" placeholder="Google Drive Link (पहली फोटो)" required>
+            </div>
+
+            <div class="form-group optional-images">
+                <label>अन्य फोटो के लिंक (Optional - 4 तक)</label>
+                <input type="url" id="productImage2" placeholder="दूसरी फोटो का URL (Optional)">
+                <input type="url" id="productImage3" placeholder="तीसरी फोटो का URL (Optional)">
+                <input type="url" id="productImage4" placeholder="चौथी फोटो का URL (Optional)">
+                <input type="url" id="productImage5" placeholder="पांचवी फोटो का URL (Optional)">
+            </div>
+
+            <div class="price-row">
+                <div class="form-group">
+                    <label>असली कीमत (MRP) *</label>
+                    <input type="number" id="productMrp" placeholder="जैसे: 157" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>बेचने वाली कीमत *</label>
+                    <input type="number" id="productPrice" placeholder="जैसे: 128" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>उपलब्ध साइज़ (Sizes) *</label>
+                <input type="text" id="productSizes" placeholder="कॉमा लगाकर लिखें जैसे: S, M, L, XL (या Free Size)" required>
+            </div>
+
+            <div class="price-row">
+                <div class="form-group">
+                    <label>रेटिंग (Rating) *</label>
+                    <input type="number" step="0.1" max="5" min="1" id="productRating" placeholder="जैसे: 4.2" required>
+                </div>
+                <div class="form-group">
+                    <label>कुल रिव्यु की संख्या *</label>
+                    <input type="number" id="productReviews" placeholder="जैसे: 2727" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>उत्पाद की विशेषताएँ (Details/Specs) *</label>
+                <textarea id="productDetails" rows="4" placeholder="जैसे: साइज़: Free Size, प्लेटिंग: 1 ग्राम सोना..." required></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="submit-btn">
+                <i class="fas fa-cloud-upload-alt"></i> वेबसाइट पर अपलोड करें
+            </button>
+            
+        </form>
+    </div>
+
+    <script>
+        const FIREBASE_DB_URL = "https://meesho-2e8f5-default-rtdb.firebaseio.com";
+
+        document.getElementById('addProductForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "अपलोड हो रहा है...";
+            submitBtn.disabled = true;
+
+            const id = document.getElementById('productId').value.trim();
+            const name = document.getElementById('productName').value;
+            const mrp = parseInt(document.getElementById('productMrp').value);
+            const price = parseInt(document.getElementById('productPrice').value);
+            const sizesStr = document.getElementById('productSizes').value;
+            const rating = document.getElementById('productRating').value;
+            const reviews = document.getElementById('productReviews').value;
+            const details = document.getElementById('productDetails').value;
+
+            const img1 = document.getElementById('productImage1').value;
+            const img2 = document.getElementById('productImage2').value;
+            const img3 = document.getElementById('productImage3').value;
+            const img4 = document.getElementById('productImage4').value;
+            const img5 = document.getElementById('productImage5').value;
+
+            const imagesArray = [img1, img2, img3, img4, img5].filter(img => img.trim() !== "");
+            const discount = Math.round(((mrp - price) / mrp) * 100);
+
+            // Convert Sizes string to array
+            const sizesArray = sizesStr.split(',').map(s => s.trim()).filter(s => s !== "");
+
+            const productData = {
+                id: id,
+                name: name,
+                images: imagesArray,
+                mrp: mrp,
+                price: price,
+                discount: discount,
+                sizes: sizesArray,
+                rating: rating,
+                reviews: reviews,
+                details: details
+            };
+
+            fetch(`${FIREBASE_DB_URL}/products/${id}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(productData),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                if(response.ok) {
+                    alert(`शानदार! प्रोडक्ट "${name}" सफलतापूर्वक डेटाबेस में जुड़ गया है।`);
+                    this.reset();
+                } else {
+                    alert("कुछ गड़बड़ हुई। कृपया फिर से कोशिश करें।");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("इंटरनेट कनेक्शन चेक करें या बाद में प्रयास करें।");
+            })
+            .finally(() => {
+                submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> वेबसाइट पर अपलोड करें';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

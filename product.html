@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meesho Product Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f2f2f2; color: #333; padding-bottom: 70px; }
+
+        /* Header */
+        header { background-color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .logo-container { display: flex; align-items: center; }
+        .meesho-logo { color: #9f2089; font-size: 22px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .header-icons { display: flex; align-items: center; gap: 18px; }
+        .cart-icon { position: relative; display: flex; }
+        .cart-badge { position: absolute; top: -5px; right: -8px; background-color: #9f2089; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; }
+        
+        .section { background-color: #fff; margin-bottom: 8px; padding: 15px; }
+        
+        /* Product Image & Swipe Area */
+        .product-image-container { width: 100%; background: #fff; text-align: center; padding: 10px 0; position: relative; min-height: 350px; overflow: hidden; touch-action: pan-y; }
+        .product-image-container img#mainImage { width: 100%; max-width: 400px; height: 350px; object-fit: contain; transition: opacity 0.3s ease; }
+        #loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 10; font-size: 16px; color: #9f2089; font-weight: bold; }
+
+        /* Image Dots */
+        .image-dots-wrapper { display: flex; justify-content: center; gap: 6px; margin-top: 10px; padding-bottom: 5px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; transition: 0.3s; cursor: pointer; }
+        .dot.active { background: #9f2089; transform: scale(1.3); }
+
+        .thumbnails { display: flex; justify-content: center; gap: 10px; margin-top: 10px; padding: 0 10px; overflow-x: auto; }
+        .thumb-img { width: 55px; height: 55px; object-fit: cover; border: 2px solid transparent; border-radius: 6px; cursor: pointer; background-color: #f8f8f8; }
+        .thumb-img.active { border-color: #9f2089; }
+
+        /* Product Info */
+        .product-title { font-size: 16px; color: #555; margin-bottom: 10px; line-height: 1.4; font-weight: 400; }
+        .product-title strong { color: #333; font-weight: 700; }
+        .price-row { display: flex; align-items: center; margin-bottom: 10px; }
+        .main-price { font-size: 26px; font-weight: 600; color: #333; }
+        .mrp { text-decoration: line-through; color: #888; margin: 0 10px; font-size: 14px; }
+        .discount { color: #03a685; font-size: 14px; font-weight: 600; }
+        .deal-timer-container { display: flex; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: #444; }
+        .deal-badge { background-color: #ffebd2; color: #d15615; padding: 3px 8px; border-radius: 4px; margin-left: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .rating-wrapper { display: inline-flex; align-items: center; background-color: #f8f8f8; padding: 6px 12px; border-radius: 20px; border: 1px solid #eee; margin-top: 5px; }
+        .rating-badge { background-color: #23bb75; color: white; padding: 4px 8px; border-radius: 15px; font-size: 13px; display: inline-flex; align-items: center; font-weight: 600; }
+        .rating-count { color: #555; font-size: 12px; margin-left: 8px; font-weight: 500; }
+
+        /* Trust Badges */
+        .trust-section-wrapper { background-color: #fdf2fb; padding: 12px 15px; margin: 15px -15px -15px -15px; }
+        .animated-border-box { position: relative; background: #fdf2fb; border-radius: 8px; padding: 1.5px; overflow: hidden; }
+        .animated-border-box::before { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent, transparent, transparent, #9f2089); animation: border-rotate 3s linear infinite; }
+        @keyframes border-rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .inner-trust-box { position: relative; background: white; border-radius: 7px; padding: 12px 2px; display: flex; justify-content: space-between; align-items: center; z-index: 1; }
+        .badge-item { display: flex; align-items: center; justify-content: center; flex: 1; }
+        .badge-divider { width: 1px; height: 30px; background-color: #f0f0f0; }
+        .badge-icon { margin-right: 6px; display: flex; align-items: center; justify-content: center; }
+        .badge-text { font-size: 11px; color: #333; line-height: 1.3; }
+        .badge-text-bold { font-weight: 700; font-size: 12px; }
+
+        /* Size Selection on Main Page */
+        .size-selection-section { padding-top: 15px; }
+        .size-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .size-chip { border: 1px solid #ccc; padding: 6px 16px; border-radius: 20px; font-size: 14px; color: #333; cursor: pointer; transition: 0.3s; background: #fff; }
+        .size-chip.selected { background: #fdf2fb; border-color: #9f2089; color: #9f2089; font-weight: bold; }
+
+        /* Delivery Estimate Section */
+        .delivery-est-section { font-size: 15px; color: #333; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Product Specs */
+        .specs-section { padding-top: 5px; }
+        .specs-header { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .copy-btn { color: #9f2089; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .spec-item { display: flex; flex-direction: column; }
+        .spec-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+        .spec-value { font-size: 14px; color: #333; }
+
+        /* Rating Bars Section */
+        .rating-summary-box { display: flex; align-items: center; gap: 20px; margin-top: 15px; }
+        .rating-big-box { background: #23bb75; color: white; border-radius: 8px; padding: 15px; text-align: center; width: 100px; flex-shrink: 0; }
+        .rating-big-num { font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .rating-big-text { font-size: 10px; margin-top: 5px; opacity: 0.9; }
+        
+        .rating-bars { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .bar-row { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #555; }
+        .bar-label { width: 55px; }
+        .bar-outer { flex: 1; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+        .bar-inner { height: 100%; border-radius: 2px; }
+        .bar-count { width: 40px; text-align: right; color: #888; }
+
+        /* Related Products Grid */
+        .section-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .product-card { background: #fff; border-radius: 6px; overflow: hidden; text-decoration: none; color: inherit; border: 1px solid #f0f0f0; }
+        .product-card img.p-img { width: 100%; height: 170px; object-fit: cover; }
+        .pc-details { padding: 10px; }
+        .pc-title { font-size: 12px; color: #555; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pc-price-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+        .pc-price { font-weight: 600; font-size: 15px; color: #333; }
+        .pc-mrp { text-decoration: line-through; color: #888; font-size: 11px; }
+        .pc-discount { color: #03a685; font-size: 11px; font-weight: 600; }
+
+        /* Bottom Sticky Bar */
+        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; padding: 8px 15px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn { flex: 1; padding: 12px; text-align: center; font-size: 15px; font-weight: 600; border-radius: 4px; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-cart { background-color: #fff; color: #9f2089; border: 1px solid #9f2089; margin-right: 10px; }
+        .btn-buy { background-color: #9f2089; color: #fff; }
+
+        /* --- FULL SCREEN CHECKOUT OVERLAY (Address -> Review -> Payment) --- */
+        .checkout-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f2f2; z-index: 2000; overflow-y: auto; }
+        .checkout-header { background: #fff; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #eee; }
+        .back-arrow { font-size: 20px; color: #333; margin-right: 15px; cursor: pointer; }
+        .checkout-title { font-size: 16px; color: #333; font-weight: 600; flex: 1; }
+        
+        .address-box-card { background: #fff; border-radius: 8px; margin: 15px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .form-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .form-group { flex: 1; position: relative; }
+        .form-group label { display: block; font-size: 12px; color: #9f2089; margin-bottom: 4px; font-weight: 600; }
+        .form-input-line { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-size: 14px; outline: none; color: #333; background: transparent; }
+        .form-input-line:focus { border-bottom: 2px solid #9f2089; }
+        
+        .green-banner { background: #e6f7f1; color: #03a685; padding: 10px; text-align: center; font-size: 14px; font-weight: bold; border-bottom: 3px dotted #cbf0e4; }
+        .co-section { background: #fff; padding: 15px; margin-bottom: 8px; }
+        
+        .review-card { display: flex; gap: 12px; }
+        .review-card img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #eee; }
+        .review-details { flex: 1; }
+        .r-title { font-size: 13px; color: #333; margin-bottom: 4px; }
+        .r-price { font-size: 15px; font-weight: bold; color: #333; }
+        .r-mrp { text-decoration: line-through; color: #888; font-size: 12px; margin: 0 5px; }
+        .r-discount { color: #03a685; font-size: 12px; font-weight: bold; }
+        .r-extra { font-size: 12px; color: #555; margin-top: 4px; }
+        .sold-by { font-size: 12px; color: #666; padding-top: 12px; border-top: 1px solid #f0f0f0; margin-top: 12px; }
+        .delivery-est { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #333; font-weight: 500; margin-bottom: 15px; }
+        .address-box { font-size: 13px; color: #555; line-height: 1.5; display: flex; justify-content: space-between; align-items: flex-start; }
+        .change-btn { border: 1px solid #ccc; background: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; color: #333; cursor: pointer; }
+        .price-details { display: flex; justify-content: space-between; font-size: 14px; color: #333; font-weight: 500; }
+
+        /* Payment */
+        .pay-option { border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; }
+        .pay-option.active { border-color: #03a685; background: #fafafa; }
+        .pay-left { display: flex; align-items: center; gap: 15px; width: 100%; }
+        .pay-amt { font-size: 16px; font-weight: bold; color: #333; }
+        .pay-title { font-size: 14px; color: #333; display: flex; align-items: center; gap: 8px; flex: 1; }
+        .pay-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ccc; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .pay-option.active .pay-radio { border-color: #9f2089; }
+        .pay-option.active .pay-radio::after { content: ""; width: 10px; height: 10px; background: #9f2089; border-radius: 50%; }
+        
+        .slide-icon { display: none; width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: #fff; padding: 1px; }
+        .slide-icon.active { display: block; }
+        .qr-section { text-align: center; padding: 15px 0; width: 100%; display: none; }
+        .pay-option.active + .qr-section, .pay-option.active .qr-section { display: block; }
+        .qr-section img { width: 160px; height: 160px; border: 1px solid #ddd; padding: 5px; border-radius: 8px; background: #fff; cursor: pointer; }
+        .share-btn { color: #9f2089; font-size: 14px; font-weight: bold; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 5px; cursor: pointer; }
+        
+        .checkout-bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
+        .btn-continue { background-color: #9f2089; color: #fff; border: none; padding: 12px 30px; border-radius: 4px; font-size: 15px; font-weight: bold; width: 60%; cursor: pointer; }
+   
+/* User Reviews */
+.user-reviews { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
+.review-item { margin-bottom: 20px; border-bottom: 1px solid #f5f5f5; padding-bottom: 15px; }
+.review-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.r-star-badge { background-color: #23bb75; color: white; padding: 3px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 2px; }
+.r-title { font-size: 14px; font-weight: 600; color: #555; }
+.r-date { font-size: 12px; color: #888; }
+.r-text { font-size: 14px; color: #333; margin-bottom: 8px; line-height: 1.4; }
+.r-author { font-size: 12px; color: #666; margin-bottom: 10px; }
+.r-helpful { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #666; cursor: pointer; }
+.all-reviews-link { color: #9f2089; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none; padding-top: 5px; }
+.all-reviews-icon { background-color: #9f2089; color: white; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; justify-content: center; align-items: center; margin-left: 8px; font-size: 10px; } 
+
+/* ===== TARGETED UPDATES ===== */
+#step-review { padding-bottom: 90px; }
+.step-badge { background: #eaf1ff; color: #4a6fd8; border: 1px solid #4a6fd8; border-radius: 14px; font-size: 12px; font-weight: 500; padding: 4px 12px; margin-left: 8px; white-space: nowrap; }
+.co-price-info { display: flex; flex-direction: column; gap: 4px; }
+.co-total-row { display: flex; align-items: center; gap: 8px; }
+.co-total { font-size: 22px; font-weight: 600; color: #333; }
+.co-off-badge { background: #e6f7f1; color: #03a685; font-size: 13px; font-weight: 500; padding: 3px 8px; border-radius: 4px; }
+.co-view-details { color: #9f2089; font-size: 13px; cursor: pointer; }
+.green-banner { background: linear-gradient(180deg, #d9f5ea 0%, #f1fbf7 100%); font-size: 20px; font-weight: 500; padding: 14px 10px; }
+.green-banner .gb-small { font-size: 15px; font-weight: 400; color: #333; }
+
+/* UPI offer */
+.upi-offer { display: flex; align-items: center; gap: 10px; background: #f6f6f8; border-radius: 10px; padding: 8px 10px; margin: 2px 0 10px; width: 100%; }
+.upi-offer img { width: 28px; height: 28px; border-radius: 50%; object-fit: contain; background: #fff; flex-shrink: 0; }
+.upi-offer span { font-size: 15px; color: #555; }
+
+/* Home/Product search */
+.search-wrap { position: relative; margin-bottom: 12px; }
+.search-wrap input { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px 10px 38px; font-size: 14px; outline: none; background: #fafafa; color: #333; }
+.search-wrap input:focus { border-color: #9f2089; background: #fff; }
+.search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); }
+.search-empty { display: none; text-align: center; color: #888; font-size: 14px; padding: 20px 0; grid-column: 1 / -1; }
+
+/* Deal countdown row in checkout */
+.cd-row { background: #fff; padding: 10px 15px; margin-bottom: 8px; }
+.cd-row .deal-timer-container { margin-bottom: 0; }
+
+/* Payment page */
+.pay-heading { font-size: 16px; color: #333; margin-bottom: 15px; }
+.pay-option { border-radius: 10px; border: 1px solid #c9c9d1; padding: 18px 15px; margin-bottom: 15px; background: #fff; }
+.pay-option.active { border-color: #9f2089; background: #fff; }
+.pay-option.disabled { cursor: not-allowed; background: #f7f7f7; }
+.pay-option.disabled .pay-amt, .pay-option.disabled .pay-title-text { color: #9a9a9a; }
+.pay-option.disabled .pay-radio { border-color: #ddd; background: #eee; }
+.pay-price-col { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding-right: 14px; border-right: 1px dashed #ccc; min-width: 78px; }
+.pay-strike { text-decoration: line-through; color: #666; font-size: 12px; }
+.pay-amt.green { color: #078d63; font-size: 20px; font-weight: 600; }
+.pay-save { background: #d9f5ea; color: #078d63; font-size: 12px; padding: 1px 6px; border-radius: 4px; }
+.pay-title { font-size: 16px; }
+.pay-na { font-size: 12px; color: #d32f2f; margin-top: 3px; display: block; }
+.pay-radio { width: 24px; height: 24px; border: 2px solid #666; }
+.pay-option.active .pay-radio::after { width: 12px; height: 12px; }
+.pay-title-col { display: flex; flex-direction: column; }
+
+/* UPI icons marquee (right -> left) */
+.upi-marquee { width: 92px; height: 28px; overflow: hidden; position: relative; margin-left: 6px; flex-shrink: 1; min-width: 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%); }
+.upi-track { display: flex; width: max-content; animation: upiScroll 8s linear infinite; will-change: transform; }
+.upi-track img { width: 28px; height: 28px; margin-right: 10px; border-radius: 50%; object-fit: contain; background: #fff; flex-shrink: 0; }
+@keyframes upiScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Price breakdown */
+.price-breakdown { display: none; background: #fff; padding: 0 15px 15px; margin-bottom: 8px; font-size: 14px; color: #333; }
+.price-breakdown.open { display: block; }
+.pb-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; }
+.pb-row.total { font-weight: 700; border-bottom: none; }
+.pb-row .green { color: #03a685; }
+
+/* ===== FINAL 5 CHANGES ===== */
+.sp-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f2f2; z-index: 1500; overflow-y: auto; }
+.sp-top { background: #fff; padding: 12px 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 5; border-bottom: 1px solid #eee; }
+.sp-top input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 15px; outline: none; background: #fafafa; min-width: 0; }
+.sp-top input:focus { border-color: #9f2089; background: #fff; }
+.toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 14px; z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.25s; white-space: nowrap; }
+.toast.show { opacity: 1; }
+.cart-item { display: flex; gap: 12px; background: #fff; padding: 12px 15px; margin-bottom: 8px; }
+.cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; background: #f8f8f8; }
+.cart-info { flex: 1; min-width: 0; }
+.cart-name { font-size: 14px; color: #333; margin-bottom: 4px; }
+.cart-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.qty-box { display: inline-flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; }
+.qty-box button { background: #fff; border: none; width: 30px; height: 28px; font-size: 18px; color: #9f2089; cursor: pointer; }
+.qty-box span { min-width: 28px; text-align: center; font-size: 14px; }
+.cart-remove { color: #9f2089; font-size: 13px; font-weight: 600; cursor: pointer; }
+.cart-empty { text-align: center; color: #888; padding: 60px 20px; font-size: 15px; }
+.cart-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 14px 15px; justify-content: space-between; font-size: 17px; font-weight: 600; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
+
+/* Thinner payment boxes */
+.pay-option { padding: 10px 14px; margin-bottom: 12px; border-radius: 8px; }
+.pay-left { gap: 12px; }
+.pay-price-col { min-width: 68px; padding-right: 12px; gap: 1px; }
+.pay-strike { font-size: 11px; }
+.pay-amt { font-size: 17px; }
+.pay-amt.green { font-size: 18px; }
+.pay-save { font-size: 11px; padding: 0 6px; }
+.pay-title { font-size: 15px; }
+.pay-radio { width: 22px; height: 22px; }
+.pay-option.active .pay-radio::after { width: 11px; height: 11px; }
+.pay-option.disabled { pointer-events: none; }
+.pay-na { font-size: 11.5px; margin-top: 1px; }
+
+/* Blurred QR (always visible, clear on click) */
+.qr-section { display: block !important; padding: 12px 0 4px; }
+.qr-section img { width: 135px; height: 135px; padding: 6px; border: 2px solid #dfe6fb; background: #fff; border-radius: 8px; filter: blur(7px); transition: filter 0.15s; }
+.qr-section img.revealed { filter: none; }
+.share-btn { margin-top: 10px; }
+
+/* UPI icons: small round fixed box, icons slide right -> left inside */
+.upi-marquee { --s: 30px; width: var(--s); height: var(--s); border-radius: 50%; overflow: hidden; position: relative; margin-left: 8px; flex-shrink: 0; border: 1px solid #eee; background: #fff; -webkit-mask-image: none; mask-image: none; transform: translateZ(0); }
+.upi-track { display: flex; width: max-content; height: 100%; animation: upiSlide 8s ease-in-out infinite; }
+.upi-track img { width: var(--s); height: var(--s); margin: 0; padding: 3px; border-radius: 0; object-fit: contain; background: #fff; flex-shrink: 0; }
+@keyframes upiSlide {
+  0%, 18%   { transform: translateX(0); }
+  25%, 43%  { transform: translateX(calc(var(--s) * -1)); }
+  50%, 68%  { transform: translateX(calc(var(--s) * -2)); }
+  75%, 93%  { transform: translateX(calc(var(--s) * -3)); }
+  100%      { transform: translateX(calc(var(--s) * -4)); }
+}
+.liked { fill: #9f2089; stroke: #9f2089; }
+.liked-product { fill: #d32f2f !important; stroke: #d32f2f !important; }
+</style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="meesho-logo" style="cursor: default;">
+                <div style="width: 32px; height: 28px; background-color: #580036; border-radius: 6px; display: flex; justify-content: center; align-items: center;">
+                    <svg width="20" height="20" viewBox="0 0 100 100" fill="none"><path d="M85 35C80 35 75 38 70 43C65 38 60 35 50 35C35 35 25 45 25 60V80C25 85 28 88 33 88C38 88 41 85 41 80V60C41 55 44 52 49 52C54 52 57 55 57 60V80C57 85 60 88 65 88C70 88 73 85 73 80V60C73 55 76 52 81 52C86 52 89 55 89 60V80C89 85 92 88 97 88C102 88 105 85 105 80V60C105 45 95 35 85 35Z" fill="#F4900C" transform="translate(-15, -15) scale(1.1)"/></svg>
+                </div>
+                meesho
+            </div>
+        </div>
+        <div class="header-icons">
+            <svg id="openSearchBtn" onclick="openSearch()" style="cursor:pointer" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <svg id="headerWishlistBtn" style="cursor: pointer;" width="22" height="22" viewBox="0 0 24 24" fill="#d32f2f" stroke="#d32f2f" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span class="cart-icon" id="cartIconBtn" onclick="openCart()" style="cursor:pointer">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.8"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+            </span>
+        </div>
+    </header>
+
+    <div class="product-image-container" id="swipeArea">
+        <div id="loading-overlay">डेटा लोड हो रहा है...</div>
+        <img id="mainImage" src="" alt="Product Image" loading="lazy">
+        <div class="image-dots-wrapper" id="imageDots"></div>
+        <div class="thumbnails" id="thumbnailContainer"></div>
+    </div>
+
+    <div class="section">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+            <h1 class="product-title" id="productName" style="margin-bottom: 0;"><strong>...</strong></h1>
+            <div style="display: flex; gap: 15px; align-items: center; margin-left: 10px;">
+                <svg id="shareBtnProduct" style="cursor: pointer;" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.8"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                <svg id="likeBtnProduct" style="cursor: pointer;" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
+        </div>
+        <div class="price-row">
+            <span class="main-price" id="productPrice">₹0</span>
+            <span class="mrp" id="productMrp">₹0</span>
+            <span class="discount" id="productDiscount">0% की छूट</span>
+        </div>
+        <div class="upi-offer">
+            <img src="https://drive.google.com/thumbnail?id=1OocgK_R6wiRh5bmQB4LDyEtE1ecLXMSK&sz=w200" alt="UPI">
+            <span>UPI Offer applied for you!!</span>
+        </div>
+        <div class="deal-timer-container">
+            <span class="deal-text">Deal खत्म होने में बचे हैं सिर्फ</span>
+            <span class="deal-badge">💣 <span id="countdown" class="cd-sync">00h : 30m : 00s</span></span>
+        </div>
+        
+        <div class="rating-wrapper">
+            <span class="rating-badge" id="productRatingVal">4.2 <svg width="10" height="10" viewBox="0 0 24 24" fill="white" style="margin-left: 3px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+            <span class="rating-count" id="productReviewCount">2727 रेटिंग्स</span>
+        </div>
+        
+        <!-- Trust Badges -->
+        <div class="trust-section-wrapper">
+            <div class="animated-border-box">
+                <div class="inner-trust-box">
+                    <div class="badge-item">
+                        <div class="badge-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="#debd94"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A1.001 1.001 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9-4.44c.32.17.53.5.53.88v9M12 2.29l-7.51 4.22L12 10.74l7.51-4.23L12 2.29"></path></svg></div>
+                        <div class="badge-text"><span class="badge-text-bold">7 Days</span><br><span style="color:#9f2089;font-weight:bold;border-bottom:1px dashed #9f2089;">Easy Return</span></div>
+                    </div>
+                    <div class="badge-divider"></div>
+                    <div class="badge-item">
+                        <div class="badge-icon"><svg width="26" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="14" rx="2" fill="#FDF2FB" stroke="#9f2089" stroke-width="1.5"></rect><circle cx="12" cy="11" r="3" fill="#9f2089"></circle><text x="12" y="14.5" font-size="10" fill="white" text-anchor="middle" font-weight="bold">₹</text></svg></div>
+                        <div class="badge-text"><span class="badge-text-bold">Cash on</span><br><span class="badge-text-bold">Delivery</span></div>
+                    </div>
+                    <div class="badge-divider"></div>
+                    <div class="badge-item">
+                        <div class="badge-icon"><svg width="20" height="22" viewBox="0 0 24 24" fill="none"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8 8a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-8-8z" fill="#9f2089"></path><text x="12" y="15" font-size="10" fill="white" text-anchor="middle" font-weight="bold">%</text></svg></div>
+                        <div class="badge-text"><span class="badge-text-bold">Lowest</span><br><span class="badge-text-bold">Price</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Size Selection Directly on Product Page -->
+    <div class="section size-selection-section">
+        <h2 class="section-title" style="margin-bottom: 5px;">साइज़ चुनें</h2>
+        <div class="size-chips" id="sizeOptionsContainer">
+            <!-- Dynamic size chips will load here -->
+        </div>
+    </div>
+
+    <!-- Delivery Estimate Section -->
+    <div class="section delivery-est-section">
+        <div>डिलीवरी द्वारा <span id="deliveryDateStr">...</span><br><span style="font-size: 13px; color: #888;">पर 344001</span></div>
+        <div style="border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">चेंज करें / बदलें</div>
+    </div>
+
+    <!-- Product Specifications -->
+    <div class="section specs-section">
+        <div class="specs-header">उत्पाद की विशेषताएँ <span class="copy-btn">कॉपी करें</span></div>
+        <div class="specs-grid" id="specsContainer"></div>
+    </div>
+
+    <!-- Rating & Reviews Section -->
+<div class="section">
+    <h2 class="section-title" style="margin-bottom: 5px;">ग्राहक की रेटिंग और रिव्यु</h2>
+    <div class="rating-summary-box">
+        <div class="rating-big-box">
+            <div class="rating-big-num"><span id="ratingBigVal">4.1</span> <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></div>
+            <div class="rating-big-text"><span id="ratingBigCount">21,685</span> ग्राहकों की रेटिंग्स</div>
+        </div>
+        
+        <div class="rating-bars">
+            <div class="bar-row"><span class="bar-label">बहुत अच्छा</span><div class="bar-outer"><div class="bar-inner" style="width: 60%; background: #23bb75;"></div></div><span class="bar-count">11,516</span></div>
+            <div class="bar-row"><span class="bar-label">अच्छा</span><div class="bar-outer"><div class="bar-inner" style="width: 25%; background: #23bb75;"></div></div><span class="bar-count">5,427</span></div>
+            <div class="bar-row"><span class="bar-label">ठीक</span><div class="bar-outer"><div class="bar-inner" style="width: 10%; background: #ffc107;"></div></div><span class="bar-count">2,467</span></div>
+            <div class="bar-row"><span class="bar-label">खराब</span><div class="bar-outer"><div class="bar-inner" style="width: 3%; background: #ff5722;"></div></div><span class="bar-count">690</span></div>
+            <div class="bar-row"><span class="bar-label">बहुत बुरा</span><div class="bar-outer"><div class="bar-inner" style="width: 2%; background: #f44336;"></div></div><span class="bar-count">1,585</span></div>
+        </div>
+    </div>
+
+    <!-- User Reviews Added Here -->
+    <div class="user-reviews">
+        
+        <!-- Review 1 -->
+        <div class="review-item">
+            <div class="review-header">
+                <span class="r-star-badge">5 <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+                <span class="r-title">बहुत अच्छा</span>
+                <span class="r-date">• Posted on 21 अग०, 2026</span>
+            </div>
+            <div class="r-text">good product. ❤️</div>
+            <div class="r-author">~Jyoti Devi</div>
+            <div class="r-helpful">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                मददगार (1)
+            </div>
+        </div>
+        
+        <!-- Review 2 -->
+        <div class="review-item">
+            <div class="review-header">
+                <span class="r-star-badge">5 <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+                <span class="r-title">बहुत अच्छा</span>
+                <span class="r-date">• Posted on 08 अप्रैल, 2026</span>
+            </div>
+            <div class="r-text">बहुत अच्छा 👍</div>
+            <div class="r-author">~Meesho User</div>
+            <div class="r-helpful">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                मददगार (145)
+            </div>
+        </div>
+
+        <a href="#" class="all-reviews-link">सभी रिव्यु देखें <span class="all-reviews-icon">➔</span></a>
+    </div>
+</div>
+
+    <!-- Related Products -->
+    <div class="section">
+        <h2 class="section-title">PEOPLE ALSO VIEWED</h2>
+        <div class="product-grid" id="relatedProductsGrid"></div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-bar">
+        <button class="btn btn-cart" id="addToCartBtn" onclick="addToCart()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9f2089" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> कार्ट में डालें</button>
+        <button class="btn btn-buy" id="openCheckoutBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg> अभी खरीदें</button>
+    </div>
+
+    <!-- Checkout Overlay (Address -> Review -> Payment) -->
+    <div class="checkout-overlay" id="checkoutFlow">
+        
+        <!-- STEP 1: Address Input -->
+        <div id="step-address" style="display: none; height: 100%; background: #f2f2f2;">
+            <div class="checkout-header" style="box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding-bottom: 20px; position: relative;">
+                <span class="back-arrow" onclick="closeCheckout()">←</span>
+                <span class="checkout-title" style="text-transform: uppercase; font-size: 14px; font-weight: 600;">ADD DELIVERY ADDRESS</span>
+                <div style="position: absolute; bottom: 0; left: 0; width: 30%; height: 2px; background: #4285f4;"></div>
+            </div>
+
+            <div class="address-box-card" style="margin-top: 15px;">
+                <div class="form-row">
+                    <div class="form-group"><label>आपका नाम *</label><input type="text" id="custName" class="form-input-line"></div>
+                    <div class="form-group"><label>आपका फोन नंबर *</label><input type="tel" id="custPhone" class="form-input-line" value="+91 "></div>
+                </div>
+            </div>
+
+            <div class="address-box-card">
+                <div class="form-group" style="margin-bottom: 25px;"><label>मकान नंबर/सोसाइटी का नाम *</label><input type="text" id="custHouse" class="form-input-line"></div>
+                <div class="form-group" style="margin-bottom: 25px;"><label style="color: #666;">सड़क का नाम/एरिया/कॉलोनी *</label><input type="text" id="custStreet" class="form-input-line"></div>
+                <div class="form-group" style="margin-bottom: 25px;"><label style="color: #666;">पते का पिनकोड लिखें *</label><input type="text" id="custPincode" class="form-input-line"></div>
+                
+                <div class="form-row" style="margin-bottom: 0;">
+                    <div class="form-group"><label style="color: #666;">शहर *</label><input type="text" id="custCity" class="form-input-line"></div>
+                    <div class="form-group">
+                        <label style="color: #666;">राज्य *</label>
+                        <select id="custState" class="form-input-line" style="background: transparent; appearance: none;">
+                            <option value="">चुनें</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option><option value="Arunachal Pradesh">Arunachal Pradesh</option><option value="Assam">Assam</option><option value="Bihar">Bihar</option><option value="Chhattisgarh">Chhattisgarh</option><option value="Goa">Goa</option><option value="Gujarat">Gujarat</option><option value="Haryana">Haryana</option><option value="Himachal Pradesh">Himachal Pradesh</option><option value="Jharkhand">Jharkhand</option><option value="Karnataka">Karnataka</option><option value="Kerala">Kerala</option><option value="Madhya Pradesh">Madhya Pradesh</option><option value="Maharashtra">Maharashtra</option><option value="Manipur">Manipur</option><option value="Meghalaya">Meghalaya</option><option value="Mizoram">Mizoram</option><option value="Nagaland">Nagaland</option><option value="Odisha">Odisha</option><option value="Punjab">Punjab</option><option value="Rajasthan">Rajasthan</option><option value="Sikkim">Sikkim</option><option value="Tamil Nadu">Tamil Nadu</option><option value="Telangana">Telangana</option><option value="Tripura">Tripura</option><option value="Uttar Pradesh">Uttar Pradesh</option><option value="Uttarakhand">Uttarakhand</option><option value="West Bengal">West Bengal</option><option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option><option value="Chandigarh">Chandigarh</option><option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option><option value="Delhi">Delhi</option><option value="Jammu and Kashmir">Jammu and Kashmir</option><option value="Ladakh">Ladakh</option><option value="Lakshadweep">Lakshadweep</option><option value="Puducherry">Puducherry</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 15px;">
+                <button id="saveAddressBtn" style="background-color: #9f2089; color: #fff; border: none; padding: 14px; width: 100%; border-radius: 4px; font-size: 15px; font-weight: bold; cursor: pointer;">पता सेव करें और आगे बढ़ें</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Order Review -->
+        <div id="step-review" style="display: none;">
+            <div class="checkout-header">
+                <span class="back-arrow" onclick="showStep('step-address')">←</span>
+                <span class="checkout-title">अपने आर्डर को रिव्यु करें</span><span class="step-badge">STEP 1/2</span>
+            </div>
+            <div class="green-banner">₹<span id="co-discount-1">0</span> OFF <span class="gb-small">on this order</span></div>
+            <div class="cd-row">
+                <div class="deal-timer-container">
+                    <span class="deal-text">Deal खत्म होने में बचे हैं सिर्फ</span>
+                    <span class="deal-badge">💣 <span class="cd-sync">00h : 30m : 00s</span></span>
+                </div>
+            </div>
+            
+            <div class="co-section">
+                <div class="review-card">
+                    <img id="co-img" src="" alt="Product" loading="lazy">
+                    <div class="review-details">
+                        <div class="r-title" id="co-title">Product Title</div>
+                        <div><span class="r-price" id="co-price">₹0</span><span class="r-mrp" id="co-mrp">₹0</span><span class="r-discount" id="co-off">0% छूट</span></div>
+                        <div class="r-extra">All issue easy returns</div>
+                        <div class="r-extra">साइज़: <span id="co-selected-size">Free Size</span>  •  मात्रा: 1</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="co-section">
+                <div class="delivery-est"><svg width="20" height="20" viewBox="0 0 24 24" fill="#4285f4"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> डिलीवरी 2 दिन में हो जाएगी</div>
+                <div class="address-box">
+                    <div><strong id="co-name" style="color:#333;">Name</strong> • <span id="co-phone">Phone</span><br><span id="co-address">Address</span></div>
+                    <button class="change-btn" onclick="showStep('step-address')">चेंज करें / बदलें</button>
+                </div>
+            </div>
+
+            <div class="co-section price-details" style="cursor:pointer; margin-bottom:0;" onclick="togglePriceBreakdown(1)">
+                <span>कीमत का विवरण</span>
+                <span id="co-total-1">₹0 ⌄</span>
+            </div>
+            <div class="price-breakdown" id="pb-1">
+                <div class="pb-row"><span>Original Price</span><span id="pb-mrp-1">₹0</span></div>
+                <div class="pb-row"><span>Discounted Price</span><span id="pb-price-1">₹0</span></div>
+                <div class="pb-row"><span>कुल छूट (<span id="pb-pct-1">0</span>% OFF)</span><span class="green">- ₹<span id="pb-off-1">0</span></span></div>
+                <div class="pb-row total"><span>कुल देय राशि</span><span id="pb-total-1">₹0</span></div>
+            </div>
+
+            <div class="checkout-bottom-bar">
+                <div class="co-price-info"><div class="co-total-row"><span class="co-total" id="co-bottom-total-1">₹0</span><span class="co-off-badge">₹<span id="co-bottom-off-1">0</span> OFF</span></div><span class="co-view-details" onclick="togglePriceBreakdown(1)">कीमत की जानकारी देखें</span></div>
+                <button class="btn-continue" onclick="proceedToPayment()">आगे बढ़ें</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Payment Method -->
+        <div id="step-payment" style="display: none;">
+            <div class="checkout-header"><span class="back-arrow" onclick="showStep('step-review')">←</span><span class="checkout-title">पेमेंट करने का तरीका</span><span class="step-badge">STEP 2/2</span></div>
+            
+            <div class="green-banner" style="border-bottom:none;">₹<span id="co-discount-2">0</span> OFF <span class="gb-small">on this order</span></div>
+            <div class="cd-row">
+                <div class="deal-timer-container">
+                    <span class="deal-text">Deal खत्म होने में बचे हैं सिर्फ</span>
+                    <span class="deal-badge">💣 <span class="cd-sync">00h : 30m : 00s</span></span>
+                </div>
+            </div>
+
+            <div class="co-section" style="padding-bottom: 20px; margin-bottom:0;">
+                <p class="pay-heading">पेमेंट करने का तरीका चुनें</p>
+
+                <!-- Cash on Delivery (unavailable) -->
+                <div class="pay-option disabled" id="opt-cod">
+                    <div class="pay-left">
+                        <div class="pay-price-col"><span class="pay-amt" id="pay-amt-cod">₹0</span></div>
+                        <div class="pay-title-col">
+                            <span class="pay-title-text" style="font-size:16px;">कैश ऑन डिलीवरी</span>
+                            <span class="pay-na">इस प्रॉडक्ट में उपलब्ध नहीं है</span>
+                        </div>
+                    </div>
+                    <div class="pay-radio"></div>
+                </div>
+
+                <!-- Online Payment -->
+                <div class="pay-option active" id="opt-online" onclick="selectPayment('online')">
+                    <div class="pay-left">
+                        <div class="pay-price-col">
+                            <span class="pay-strike" id="pay-mrp-online">₹0</span>
+                            <span class="pay-amt green" id="pay-amt-online">₹0</span>
+                            <span class="pay-save">₹<span id="pay-save-online">0</span> बचाएं</span>
+                        </div>
+                        <div class="pay-title" style="gap:0;">
+                            <span class="pay-title-text">ऑनलाइन पेमेंट</span>
+                            <div class="upi-marquee"><div class="upi-track"><img src="https://drive.google.com/thumbnail?id=1OocgK_R6wiRh5bmQB4LDyEtE1ecLXMSK&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1CjU9YxUSmb1DJ59OYQfb6wIUsbOtLAvh&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1vU7BRR_TmQhO0H6Wx8O6jza8UmrO1lHF&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1_2PRErZokkyVxM5ptl7gvohKuU2DuvO3&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1OocgK_R6wiRh5bmQB4LDyEtE1ecLXMSK&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1CjU9YxUSmb1DJ59OYQfb6wIUsbOtLAvh&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1vU7BR_TmQhO0H6Wx8O6jza8UmrO1lHF&sz=w200" alt="UPI"><img src="https://drive.google.com/thumbnail?id=1_2PRErZokkyVxM5ptl7gvohKuU2DuvO3&sz=w200" alt="UPI"></div></div>
+                        </div>
+                    </div>
+                    <div class="pay-radio"></div>
+                </div>
+
+                <!-- Ask Friends to Pay -->
+                <div class="pay-option" id="opt-qr" style="flex-direction: column; align-items: flex-start;" onclick="selectPayment('qr')">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                        <div class="pay-left">
+                            <div class="pay-price-col">
+                                <span class="pay-strike" id="pay-mrp-qr">₹0</span>
+                                <span class="pay-amt green" id="pay-amt-qr">₹0</span>
+                                <span class="pay-save">Save ₹<span id="pay-save-qr">0</span></span>
+                            </div>
+                            <div class="pay-title">Ask Friends to Pay 👨‍👩‍👧‍👦</div>
+                        </div>
+                        <div class="pay-radio"></div>
+                    </div>
+                    <div class="qr-section">
+                        <a id="qrDownloadLink" href="" download="UPI_QRCode.png" onclick="event.stopPropagation(); return revealQR(event);"><img id="qrImage" src="" loading="lazy"></a>
+                        <div class="share-btn" onclick="event.stopPropagation(); shareQR()">शेयर करें <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="co-section price-details" style="cursor:pointer; margin-bottom:0;" onclick="togglePriceBreakdown(2)">
+                <span>कीमत का विवरण (1 आइटम)</span>
+                <span>⌄</span>
+            </div>
+            <div class="price-breakdown" id="pb-2">
+                <div class="pb-row"><span>Original Price</span><span id="pb-mrp-2">₹0</span></div>
+                <div class="pb-row"><span>Discounted Price</span><span id="pb-price-2">₹0</span></div>
+                <div class="pb-row"><span>कुल छूट (<span id="pb-pct-2">0</span>% OFF)</span><span class="green">- ₹<span id="pb-off-2">0</span></span></div>
+                <div class="pb-row total"><span>कुल देय राशि</span><span id="pb-total-2">₹0</span></div>
+            </div>
+            <div style="height:90px;"></div>
+
+            <div class="checkout-bottom-bar">
+                <div class="co-price-info"><div class="co-total-row"><span class="co-total" id="co-bottom-total-2">₹0</span><span class="co-off-badge">₹<span id="co-bottom-off-2">0</span> OFF</span></div><span class="co-view-details" onclick="togglePriceBreakdown(2)">कीमत की जानकारी देखें</span></div>
+                <button class="btn-continue" id="finalOrderBtn">ऑर्डर दें</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="searchPanel" class="sp-overlay">
+        <div class="sp-top">
+            <span class="back-arrow" onclick="closeSearch()" style="margin-right:12px;">←</span>
+            <input type="search" id="productSearch" placeholder="प्रोडक्ट सर्च करें" autocomplete="off">
+        </div>
+        <div style="padding:10px;">
+            <div class="product-grid" id="searchResultsGrid"></div>
+            <div class="search-empty" id="searchEmpty">कोई प्रोडक्ट नहीं मिला</div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cartPanel" class="sp-overlay">
+        <div class="sp-top">
+            <span class="back-arrow" onclick="closeCart()" style="margin-right:12px;">←</span>
+            <span class="checkout-title">मेरा कार्ट (<span id="cartCountTitle">0</span>)</span>
+        </div>
+        <div id="cartItems"></div>
+        <div id="cartFooter" class="cart-footer" style="display:none;">
+            <span>कुल राशि</span><span id="cartTotal">₹0</span>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const FIREBASE_DB_URL = "https://meesho-2e8f5-default-rtdb.firebaseio.com";
+        const urlParams = new URLSearchParams(window.location.search);
+        let productId = urlParams.get('id') || "p-1";
+
+        const MERCHANT_UPI_ID = "okpaymentc@naviaxis"; 
+        const MERCHANT_NAME = "meesho shopping"; 
+        const WHATSAPP_NUMBER = ""; 
+
+        let productImagesArray = [];
+        let currentProductData = null;
+        let selectedPaymentMode = 'online';
+        let userSelectedSize = "Free Size"; 
+        let currentImageIndex = 0;
+
+        const today = new Date();
+        today.setDate(today.getDate() + 2);
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        document.getElementById('deliveryDateStr').innerText = today.toLocaleDateString('hi-IN', options);
+
+        function getDirectImageUrl(url) {
+            if (!url) return "";
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+            return url;
+        }
+
+        // UPI icon slider is now a CSS marquee (.upi-track)
+
+        function updateMainImage(index) {
+            currentImageIndex = index;
+            const mainImg = document.getElementById('mainImage');
+            mainImg.style.opacity = 0.5; 
+            setTimeout(() => {
+                mainImg.src = getDirectImageUrl(productImagesArray[index]);
+                mainImg.style.opacity = 1;
+            }, 150);
+            document.querySelectorAll('.thumb-img').forEach((el, i) => { el.classList.toggle('active', i === index); });
+            document.querySelectorAll('.dot').forEach((el, i) => { el.classList.toggle('active', i === index); });
+        }
+
+        fetch(`${FIREBASE_DB_URL}/products.json`)
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                allProducts = data;
+                if (data[productId]) {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    currentProductData = data[productId];
+
+                    document.getElementById('productName').innerHTML = `<strong>${currentProductData.name}</strong>`;
+                    document.getElementById('productPrice').innerText = `₹${currentProductData.price}`;
+                    document.getElementById('productMrp').innerText = `₹${currentProductData.mrp}`;
+                    document.getElementById('productDiscount').innerText = `${currentProductData.discount}% की छूट`;
+                    
+                    const rating = currentProductData.rating || "4.1";
+                    const reviewsCount = currentProductData.reviews || "1234";
+                    
+                    document.getElementById('productRatingVal').innerHTML = `${rating} <svg width="10" height="10" viewBox="0 0 24 24" fill="white" style="margin-left: 3px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>`;
+                    document.getElementById('productReviewCount').innerText = `${reviewsCount} रेटिंग्स`;
+                    
+                    document.getElementById('ratingBigVal').innerText = rating;
+                    document.getElementById('ratingBigCount').innerText = reviewsCount;
+
+                    const detailsStr = currentProductData.details || "कोई अतिरिक्त जानकारी नहीं";
+                    const specsArray = detailsStr.split(',');
+                    const specsContainer = document.getElementById('specsContainer');
+                    specsArray.forEach(spec => {
+                        const parts = spec.split(':');
+                        if(parts.length > 1) {
+                            specsContainer.innerHTML += `<div class="spec-item"><span class="spec-label">${parts[0].trim()}</span><span class="spec-value">${parts[1].trim()}</span></div>`;
+                        } else {
+                            specsContainer.innerHTML += `<div class="spec-item"><span class="spec-label">विवरण</span><span class="spec-value">${spec.trim()}</span></div>`;
+                        }
+                    });
+
+                    const sizesContainer = document.getElementById('sizeOptionsContainer');
+                    sizesContainer.innerHTML = ''; 
+                    
+                    if(currentProductData.sizes && currentProductData.sizes.length > 0) {
+                        currentProductData.sizes.forEach((size, index) => {
+                            const btn = document.createElement('div');
+                            btn.className = 'size-chip';
+                            btn.innerText = size;
+                            
+                            if(index === 0) {
+                                btn.classList.add('selected');
+                                userSelectedSize = size;
+                            }
+                            
+                            btn.onclick = () => {
+                                document.querySelectorAll('.size-chip').forEach(b => b.classList.remove('selected'));
+                                btn.classList.add('selected');
+                                userSelectedSize = size;
+                            };
+                            sizesContainer.appendChild(btn);
+                        });
+                    } else {
+                        sizesContainer.innerHTML = '<div class="size-chip selected">Free Size</div>';
+                        userSelectedSize = "Free Size";
+                    }
+
+                    if(currentProductData.images && currentProductData.images.length > 0) {
+                        productImagesArray = currentProductData.images;
+                        document.getElementById('co-img').src = getDirectImageUrl(productImagesArray[0]);
+                        
+                        const thumbContainer = document.getElementById('thumbnailContainer');
+                        const dotsContainer = document.getElementById('imageDots');
+                        
+                        if(productImagesArray.length > 1) {
+                            productImagesArray.forEach((imgUrl, index) => {
+                                const imgEl = document.createElement('img');
+                                imgEl.src = getDirectImageUrl(imgUrl);
+                                imgEl.className = 'thumb-img';
+                                imgEl.loading = 'lazy';
+                                imgEl.onclick = () => updateMainImage(index);
+                                thumbContainer.appendChild(imgEl);
+
+                                const dotEl = document.createElement('div');
+                                dotEl.className = 'dot';
+                                dotEl.onclick = () => updateMainImage(index);
+                                dotsContainer.appendChild(dotEl);
+                            });
+                        }
+                        updateMainImage(0);
+                    }
+                }
+
+                const grid = document.getElementById('relatedProductsGrid');
+                for (let key in data) {
+                    if (key !== productId) {
+                        let prod = data[key];
+                        let imgUrl = (prod.images && prod.images.length > 0) ? getDirectImageUrl(prod.images[0]) : '';
+                        let cardHtml = `
+                            <a href="product.html?id=${prod.id}" class="product-card">
+                                <img src="${imgUrl}" class="p-img" loading="lazy">
+                                <div class="pc-details">
+                                    <div class="pc-title">${prod.name}</div>
+                                    <div class="pc-price-row"><span class="pc-price">₹${prod.price}</span><span class="pc-mrp">₹${prod.mrp}</span><span class="pc-discount">${prod.discount}% छूट</span></div>
+                                </div>
+                            </a>
+                        `;
+                        grid.innerHTML += cardHtml;
+                    }
+                }
+            }
+        });
+
+        // ---- Instant client-side search (no reload / no re-fetch) ----
+        let allProducts = {};
+        function makeCard(prod) {
+            const imgUrl = (prod.images && prod.images.length > 0) ? getDirectImageUrl(prod.images[0]) : '';
+            return `
+                <a href="product.html?id=${prod.id}" class="product-card">
+                    <img src="${imgUrl}" class="p-img" loading="lazy">
+                    <div class="pc-details">
+                        <div class="pc-title">${prod.name}</div>
+                        <div class="pc-price-row"><span class="pc-price">₹${prod.price}</span><span class="pc-mrp">₹${prod.mrp}</span><span class="pc-discount">${prod.discount}% छूट</span></div>
+                    </div>
+                </a>`;
+        }
+        function runSearch() {
+            const q = document.getElementById('productSearch').value.trim().toLowerCase();
+            const words = q.split(/\s+/).filter(Boolean);
+            const grid = document.getElementById('searchResultsGrid');
+            let html = '', n = 0;
+            for (const key in allProducts) {
+                const p = allProducts[key];
+                if (!p) continue;
+                const name = String(p.name || '').toLowerCase();
+                if (words.every(w => name.includes(w))) { html += makeCard(p); n++; }
+            }
+            grid.innerHTML = html;
+            document.getElementById('searchEmpty').style.display = n === 0 ? 'block' : 'none';
+        }
+        function openSearch() {
+            document.getElementById('searchPanel').style.display = 'block';
+            runSearch();
+            const inp = document.getElementById('productSearch');
+            inp.focus();
+        }
+        function closeSearch() { document.getElementById('searchPanel').style.display = 'none'; }
+        document.getElementById('productSearch').addEventListener('input', runSearch);
+
+        // ---- Cart (localStorage) ----
+        const CART_KEY = 'meeshoCart';
+        function loadCart() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (e) { return []; } }
+        function saveCart(c) { try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch (e) { console.error(e); } }
+        function escHtml(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.classList.add('show');
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => t.classList.remove('show'), 2000);
+        }
+        function updateCartBadge() {
+            const total = loadCart().reduce((a, i) => a + (i.qty || 1), 0);
+            const b = document.getElementById('cartBadge');
+            b.innerText = total;
+            b.style.display = total > 0 ? '' : 'none';
+        }
+        function addToCart() {
+            if (!currentProductData) return;
+            const cart = loadCart();
+            const found = cart.find(i => i.id === productId && i.size === userSelectedSize);
+            if (found) { found.qty = (found.qty || 1) + 1; }
+            else {
+                cart.push({
+                    id: productId,
+                    name: currentProductData.name || 'Product',
+                    image: getDirectImageUrl(productImagesArray[0]),
+                    price: currentProductData.price || 0,
+                    mrp: currentProductData.mrp || 0,
+                    discount: currentProductData.discount || 0,
+                    size: userSelectedSize,
+                    qty: 1
+                });
+            }
+            saveCart(cart);
+            updateCartBadge();
+            showToast('कार्ट में जोड़ दिया गया ✓');
+        }
+        function renderCart() {
+            const cart = loadCart();
+            const box = document.getElementById('cartItems');
+            const footer = document.getElementById('cartFooter');
+            document.getElementById('cartCountTitle').innerText = cart.reduce((a, i) => a + (i.qty || 1), 0);
+            if (cart.length === 0) {
+                box.innerHTML = '<div class="cart-empty">आपका कार्ट खाली है</div>';
+                footer.style.display = 'none';
+                return;
+            }
+            let total = 0;
+            box.innerHTML = cart.map((it, idx) => {
+                total += (it.price || 0) * (it.qty || 1);
+                return `<div class="cart-item">
+                    <a href="product.html?id=${encodeURIComponent(it.id)}"><img src="${escHtml(it.image)}" alt=""></a>
+                    <div class="cart-info">
+                        <div class="cart-name">${escHtml(it.name)}</div>
+                        <div><span class="r-price">₹${it.price}</span><span class="r-mrp">₹${it.mrp}</span><span class="r-discount">${it.discount}% छूट</span></div>
+                        <div class="r-extra">साइज़: ${escHtml(it.size)}</div>
+                        <div class="cart-actions">
+                            <div class="qty-box"><button onclick="cartChange(${idx}, -1)">−</button><span>${it.qty || 1}</span><button onclick="cartChange(${idx}, 1)">+</button></div>
+                            <span class="cart-remove" onclick="cartRemove(${idx})">हटाएं</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            document.getElementById('cartTotal').innerText = `₹${total}`;
+            footer.style.display = 'flex';
+        }
+        function cartChange(idx, d) {
+            const cart = loadCart();
+            if (!cart[idx]) return;
+            cart[idx].qty = Math.max(1, (cart[idx].qty || 1) + d);
+            saveCart(cart); renderCart(); updateCartBadge();
+        }
+        function cartRemove(idx) {
+            const cart = loadCart(); cart.splice(idx, 1);
+            saveCart(cart); renderCart(); updateCartBadge();
+        }
+        function openCart() { renderCart(); document.getElementById('cartPanel').style.display = 'block'; }
+        function closeCart() { document.getElementById('cartPanel').style.display = 'none'; }
+        updateCartBadge();
+        const swipeArea = document.getElementById('swipeArea');
+        let touchstartX = 0;
+        swipeArea.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+        swipeArea.addEventListener('touchend', e => {
+            let touchendX = e.changedTouches[0].screenX;
+            if (productImagesArray.length > 1) {
+                if (touchstartX - touchendX > 50) { if (currentImageIndex < productImagesArray.length - 1) updateMainImage(currentImageIndex + 1); } 
+                else if (touchendX - touchstartX > 50) { if (currentImageIndex > 0) updateMainImage(currentImageIndex - 1); }
+            }
+        });
+
+        function showStep(stepId) {
+            document.getElementById('step-address').style.display = 'none';
+            document.getElementById('step-review').style.display = 'none';
+            document.getElementById('step-payment').style.display = 'none';
+            document.getElementById(stepId).style.display = 'block';
+        }
+
+        function closeCheckout() { document.getElementById('checkoutFlow').style.display = 'none'; }
+
+        document.getElementById('openCheckoutBtn').addEventListener('click', function() {
+            if(currentProductData) { 
+                document.getElementById('checkoutFlow').style.display = 'block'; 
+                showStep('step-address');
+            }
+        });
+
+        function setSafeText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+        }
+
+        document.getElementById('saveAddressBtn').addEventListener('click', function() {
+            try {
+                const name = document.getElementById('custName').value.trim();
+                const phone = document.getElementById('custPhone').value.trim();
+                const house = document.getElementById('custHouse').value.trim();
+                const street = document.getElementById('custStreet').value.trim();
+                const pincode = document.getElementById('custPincode').value.trim();
+                const city = document.getElementById('custCity').value.trim();
+                const state = document.getElementById('custState').value.trim();
+                
+                if(!name || !phone || phone === "+91 " || !house || !street || !pincode || !city || !state) { 
+                    alert("कृपया सभी * वाले फील्ड भरें!"); 
+                    return; 
+                }
+                
+                const fullAddress = `${house}, ${street}, ${city}, ${state} - ${pincode}`;
+                const price = currentProductData.price || 0;
+                const mrp = currentProductData.mrp || 0;
+                const saved = mrp - price;
+
+                setSafeText('co-title', currentProductData.name || "Product");
+                setSafeText('co-price', `₹${price}`);
+                setSafeText('co-mrp', `₹${mrp}`);
+                setSafeText('co-off', `${currentProductData.discount || 0}% छूट`);
+                setSafeText('co-discount-1', saved);
+                setSafeText('co-total-1', `₹${price} ⌄`);
+                setSafeText('co-bottom-total-1', `₹${price}`);
+                setSafeText('co-bottom-off-1', saved);
+                setSafeText('co-discount-2', saved);
+                fillBreakdown(1, price, mrp, saved);
+                fillBreakdown(2, price, mrp, saved);
+                setSafeText('co-name', name);
+                setSafeText('co-phone', phone);
+                setSafeText('co-address', fullAddress);
+                setSafeText('co-selected-size', userSelectedSize);
+
+                showStep('step-review');
+            } catch(e) {
+                console.error(e);
+                alert("तकनीकी समस्या: " + e.message);
+            }
+        });
+
+        function revealQR(e) {
+            const img = document.getElementById('qrImage');
+            if (!img.classList.contains('revealed')) {
+                e.preventDefault();
+                img.classList.add('revealed');
+                return false;
+            }
+            return true;
+        }
+
+        function fillBreakdown(n, price, mrp, saved) {
+            const pct = mrp > 0 ? Math.round((saved / mrp) * 100) : (currentProductData.discount || 0);
+            setSafeText('pb-mrp-' + n, `₹${mrp}`);
+            setSafeText('pb-price-' + n, `₹${price}`);
+            setSafeText('pb-pct-' + n, currentProductData.discount || pct);
+            setSafeText('pb-off-' + n, saved);
+            setSafeText('pb-total-' + n, `₹${price}`);
+        }
+
+        function togglePriceBreakdown(n) {
+            const el = document.getElementById('pb-' + n);
+            if (!el) return;
+            el.classList.toggle('open');
+            if (el.classList.contains('open')) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function selectPayment(mode) {
+            selectedPaymentMode = mode;
+            document.getElementById('opt-online').classList.remove('active');
+            document.getElementById('opt-qr').classList.remove('active');
+            if(mode === 'online') { document.getElementById('opt-online').classList.add('active'); } 
+            else { document.getElementById('opt-qr').classList.add('active'); }
+        }
+
+        function proceedToPayment() {
+            try {
+                const price = currentProductData.price || 0;
+                const mrpP = currentProductData.mrp || price;
+                const savedP = Math.max(mrpP - price, 0);
+                setSafeText('pay-amt-online', `₹${price}`);
+                setSafeText('pay-amt-qr', `₹${price}`);
+                setSafeText('pay-amt-cod', `₹${mrpP}`);
+                setSafeText('pay-mrp-online', `₹${mrpP}`);
+                setSafeText('pay-mrp-qr', `₹${mrpP}`);
+                setSafeText('co-bottom-off-2', savedP);
+                setSafeText('pay-save-online', savedP);
+                setSafeText('pay-save-qr', savedP);
+                setSafeText('co-bottom-total-2', `₹${price}`);
+
+                const upiLink = `upi://pay?pa=${MERCHANT_UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${price}&cu=INR&tn=Order_${productId}`;
+                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
+                
+                document.getElementById('qrImage').classList.remove('revealed');
+                document.getElementById('qrImage').src = qrApiUrl;
+                document.getElementById('qrDownloadLink').href = qrApiUrl;
+
+                document.getElementById('finalOrderBtn').onclick = function() {
+                    const name = document.getElementById('custName').value.trim() || "Customer";
+                    const addressStr = document.getElementById('co-address').innerText;
+                    const waMessage = `नमस्ते, मैंने ₹${price} का पेमेंट कर दिया है।%0A%0A*प्रोडक्ट:* ${currentProductData.name || 'Product'}%0A*साइज़:* ${userSelectedSize}%0A*डिलीवरी एड्रेस:* ${name}, ${addressStr}%0A%0A(पेमेंट का स्क्रीनशॉट यहाँ भेजें)`;
+                    
+                    if (selectedPaymentMode === 'online') { window.location.href = upiLink; } 
+                    else { alert("QR कोड स्कैन करके पेमेंट पूरा करें।"); }
+                    
+                    setTimeout(() => { if(WHATSAPP_NUMBER) { window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`; } }, 2500);
+                };
+                selectPayment('online');
+                showStep('step-payment');
+            } catch (e) {
+                console.error(e);
+                alert("पेमेंट लोड करने में समस्या: " + e.message);
+            }
+        }
+
+        function shareQR() {
+            const qrUrl = document.getElementById('qrImage').src;
+            if (navigator.share) { navigator.share({ title: 'Meesho Store Payment', text: 'इस QR कोड को स्कैन करके पेमेंट करें', url: qrUrl }).catch(console.error); } 
+            else { alert("आपके ब्राउज़र में शेयर फीचर सपोर्ट नहीं कर रहा है।"); }
+        }
+
+        let totalSeconds = 30 * 60;
+        const countdownElements = document.querySelectorAll('.cd-sync');
+        function renderCountdown() {
+            let h = Math.floor(totalSeconds / 3600); let m = Math.floor((totalSeconds % 3600) / 60); let s = totalSeconds % 60;
+            const txt = `${h < 10 ? '0'+h : h}h : ${m < 10 ? '0'+m : m}m : ${s < 10 ? '0'+s : s}s`;
+            countdownElements.forEach(el => { el.innerText = txt; });
+        }
+        renderCountdown();
+        setInterval(() => {
+            if (totalSeconds <= 0) return;
+            totalSeconds--;
+            renderCountdown();
+        }, 1000); 
+
+        // ---- Header wishlist / product Like & Share ----
+        const WISHLIST_URL = "wishlist.html";
+        document.getElementById('headerWishlistBtn').addEventListener('click', function() {
+            if (WISHLIST_URL) { window.location.href = WISHLIST_URL; }
+            else { alert('Wishlist page coming soon'); }
+        });
+
+        document.getElementById('likeBtnProduct').addEventListener('click', function() {
+            this.classList.toggle('liked-product');
+        });
+
+        document.getElementById('shareBtnProduct').addEventListener('click', function() {
+            const currentUrl = window.location.href;
+            const productName = (currentProductData && currentProductData.name) ? currentProductData.name : document.title;
+            if (navigator.share) {
+                navigator.share({ title: 'Meesho Store', text: productName, url: currentUrl }).catch(console.error);
+            } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(currentUrl).catch(console.error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meesho - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            color: #9f2089;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-decoration: none;
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            background: #fff;
+            padding: 10px 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 5px;
+        }
+        .search-box {
+            background: #f0f0f0;
+            border-radius: 6px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* Categories Scroll (Dummy) */
+        .categories {
+            background: #fff;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-item {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+        }
+        .cat-circle {
+            width: 50px;
+            height: 50px;
+            background-color: #fdf2fb;
+            border-radius: 50%;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9f2089;
+            font-size: 20px;
+        }
+
+        /* Product Grid */
+        .products-section {
+            background: #fff;
+            padding: 15px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .product-card {
+            border: 1px solid #eaeaed;
+            border-radius: 6px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .product-card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+        .pc-details {
+            padding: 10px;
+        }
+        .pc-title {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .pc-price-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 4px;
+        }
+        .pc-price {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+        }
+        .pc-mrp {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 12px;
+        }
+        .pc-discount {
+            color: #03a685;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .pc-cod {
+            font-size: 12px;
+            color: #333;
+            font-weight: 600;
+            background: #f8f8f8;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        
+        #loading {
+            text-align: center;
+            padding: 40px;
+            color: #9f2089;
+            font-weight: bold;
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <a href="#" class="logo" style="display: flex; align-items: center; gap: 6px;">
+                <!-- 100% Perfect Meesho 'm' Logo Box -->
+                <div style="width: 34px; height: 28px; background-color: #55013b; border-radius: 6px; display: flex; justify-content: center; align-items: center;">
+                    <svg width="22" height="16" viewBox="20 30 90 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M85 35C80 35 75 38 70 43C65 38 60 35 50 35C35 35 25 45 25 60V80C25 85 28 88 33 88C38 88 41 85 41 80V60C41 55 44 52 49 52C54 52 57 55 57 60V80C57 85 60 88 65 88C70 88 73 85 73 80V60C73 55 76 52 81 52C86 52 89 55 89 60V80C89 85 92 88 97 88C102 88 105 85 105 80V60C105 45 95 35 85 35Z" fill="#f49200"/>
+                    </svg>
+                </div>
+                meesho
+            </a>
+        </div>
+        <div class="header-icons">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        </div>
+    </header>
+
+    <!-- Search Box -->
+    <div class="search-container">
+        <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            प्रोडक्ट, ब्रांड सर्च करें...
+        </div>
+    </div>
+
+    <!-- Dummy Categories -->
+    <div class="categories">
+        <div class="cat-item"><div class="cat-circle">👗</div>कुर्ती</div>
+        <div class="cat-item"><div class="cat-circle">💍</div>ज्वेलरी</div>
+        <div class="cat-item"><div class="cat-circle">👟</div>जूते</div>
+        <div class="cat-item"><div class="cat-circle">💄</div>ब्यूटी</div>
+        <div class="cat-item"><div class="cat-circle">👜</div>बैग्स</div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="products-section">
+        <h2 class="section-title">आपके लिए बेहतरीन प्रोडक्ट्स</h2>
+        <div class="product-grid" id="productGrid">
+            <div id="loading">प्रोडक्ट्स लोड हो रहे हैं...</div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Fetch All Products -->
+    <script>
+        const FIREBASE_DB_URL = "https://meesho-2e8f5-default-rtdb.firebaseio.com";
+
+        // Google Drive Thumbnail Link
+        function getDirectImageUrl(url) {
+            if (!url) return "";
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
+            }
+            return url;
+        }
+
+        // Firebase से सारे प्रोडक्ट मंगाना
+        fetch(`${FIREBASE_DB_URL}/products.json`)
+        .then(response => response.json())
+        .then(data => {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = ''; // लोडिंग टेक्स्ट हटाना
+
+            if (data) {
+                // डेटाबेस के सारे प्रोडक्ट को एक-एक करके पेज पर लगाना
+                for (let key in data) {
+                    let product = data[key];
+                    
+                    // अगर प्रोडक्ट में इमेज है, तो पहली इमेज लें, वरना खाली रखें
+                    let imgUrl = (product.images && product.images.length > 0) ? getDirectImageUrl(product.images[0]) : '';
+
+                    let cardHtml = `
+                        <a href="product.html?id=${product.id}" class="product-card">
+                            <img src="${imgUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200?text=No+Image'">
+                            <div class="pc-details">
+                                <div class="pc-title">${product.name}</div>
+                                <div class="pc-price-row">
+                                    <span class="pc-price">₹${product.price}</span>
+                                    <span class="pc-mrp">₹${product.mrp}</span>
+                                    <span class="pc-discount">${product.discount}% छूट</span>
+                                </div>
+                                <div class="pc-cod">₹${product.codPrice} with COD</div>
+                            </div>
+                        </a>
+                    `;
+                    grid.innerHTML += cardHtml; // ग्रिड में जोड़ना
+                }
+            } else {
+                grid.innerHTML = '<div style="grid-column: span 2; text-align: center;">अभी तक कोई प्रोडक्ट नहीं डाला गया है।</div>';
+            }
+        })
+        .catch(error => {
+            document.getElementById('productGrid').innerHTML = '<div style="grid-column: span 2; text-align: center; color: red;">लोकल टेस्टिंग: कृपया TrebEdit इस्तेमाल करें।</div>';
+        });
+    </script>
+</body>
+</html>
