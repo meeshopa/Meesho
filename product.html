@@ -653,7 +653,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         let productId = urlParams.get('id') || "p-1";
 
-        const MERCHANT_UPI_ID = "okpaymentc@naviaxis"; 
+        const MERCHANT_UPI_ID = "chonaram2005@fam"; 
         const MERCHANT_NAME = "meesho shopping"; 
         const WHATSAPP_NUMBER = ""; 
 
@@ -778,7 +778,7 @@
 
                 const grid = document.getElementById('relatedProductsGrid');
                 for (let key in data) {
-                    if (key !== productId) {
+                    if (key !== productId && data[key] && currentProductData && currentProductData.category && data[key].category === currentProductData.category) {
                         let prod = data[key];
                         let imgUrl = (prod.images && prod.images.length > 0) ? getDirectImageUrl(prod.images[0]) : '';
                         let cardHtml = `
