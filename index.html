@@ -178,6 +178,43 @@
             font-weight: bold;
             grid-column: span 2;
         }
+    
+        /* ===== Cart & Wishlist ===== */
+        .header-icons .icon-btn { position: relative; display: inline-flex; cursor: pointer; }
+        .cart-badge { position: absolute; top: -8px; right: -9px; background: #d32f2f; color: #fff; font-size: 10px; font-weight: 700; min-width: 17px; height: 17px; line-height: 17px; text-align: center; border-radius: 50%; padding: 0 3px; box-sizing: border-box; }
+        .sp-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f2f2; z-index: 1500; overflow-y: auto; }
+        .sp-top { background: #fff; padding: 12px 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 5; border-bottom: 1px solid #eee; }
+        .back-arrow { font-size: 24px; cursor: pointer; line-height: 1; margin-right: 12px; }
+        .checkout-title { font-size: 17px; font-weight: 600; color: #333; }
+        .cart-item { display: flex; gap: 12px; background: #fff; padding: 12px 15px; margin-bottom: 8px; }
+        .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; background: #f8f8f8; }
+        .cart-info { flex: 1; min-width: 0; }
+        .cart-name { font-size: 14px; color: #333; margin-bottom: 4px; }
+        .r-price { font-size: 16px; font-weight: 700; color: #333; }
+        .r-mrp { font-size: 12px; color: #888; text-decoration: line-through; margin-left: 6px; }
+        .r-discount { font-size: 12px; color: #03a685; font-weight: 600; margin-left: 6px; }
+        .r-extra { font-size: 13px; color: #666; margin-top: 3px; }
+        .cart-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+        .qty-box { display: inline-flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; }
+        .qty-box button { background: #fff; border: none; width: 30px; height: 28px; font-size: 18px; color: #9f2089; cursor: pointer; }
+        .qty-box span { min-width: 28px; text-align: center; font-size: 14px; }
+        .cart-remove { color: #9f2089; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .cart-empty { text-align: center; color: #888; padding: 60px 20px; font-size: 15px; }
+        #cartItems { padding-bottom: 90px; }
+        .cart-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 12px 15px; align-items: center; justify-content: space-between; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .cart-total-label { font-size: 12px; color: #666; }
+        .cart-total-amt { font-size: 20px; font-weight: 700; color: #333; }
+        .cart-checkout-btn { background: #9f2089; color: #fff; border: none; border-radius: 6px; padding: 13px 0; width: 55%; font-size: 16px; font-weight: 600; cursor: pointer; }
+
+        .product-card { position: relative; }
+        .wl-btn { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.92); box-shadow: 0 1px 4px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+        .wl-btn svg { fill: none; stroke: #555; }
+        .wl-btn.liked svg { fill: #d32f2f; stroke: #d32f2f; }
+        .search-box input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 14px; color: #333; }
+        .search-box input::placeholder { color: #888; }
+        .cat-item { cursor: pointer; }
+        .cat-item.active { color: #9f2089; font-weight: 600; }
+        .cat-item.active .cat-circle { border: 2px solid #9f2089; background-color: #f3d3ee; }
     </style>
 </head>
 <body>
@@ -196,8 +233,8 @@
             </a>
         </div>
         <div class="header-icons">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span class="icon-btn" id="headerWishlistBtn" onclick="openWishlist()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></span>
+            <span class="icon-btn" id="cartIconBtn" onclick="openCart()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span class="cart-badge" id="cartBadge" style="display:none">0</span></span>
         </div>
     </header>
 
@@ -205,17 +242,18 @@
     <div class="search-container">
         <div class="search-box">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            प्रोडक्ट, ब्रांड सर्च करें...
+            <input type="search" id="homeSearch" placeholder="प्रोडक्ट, ब्रांड सर्च करें..." autocomplete="off">
         </div>
     </div>
 
-    <!-- Dummy Categories -->
+    <!-- Categories -->
     <div class="categories">
-        <div class="cat-item"><div class="cat-circle">👗</div>कुर्ती</div>
-        <div class="cat-item"><div class="cat-circle">💍</div>ज्वेलरी</div>
-        <div class="cat-item"><div class="cat-circle">👟</div>जूते</div>
-        <div class="cat-item"><div class="cat-circle">💄</div>ब्यूटी</div>
-        <div class="cat-item"><div class="cat-circle">👜</div>बैग्स</div>
+        <div class="cat-item active" data-cat="all" onclick="setCategory('all')"><div class="cat-circle">🛍️</div>सभी (All)</div>
+        <div class="cat-item" data-cat="kurti" onclick="setCategory('kurti')"><div class="cat-circle">👗</div>कुर्ती</div>
+        <div class="cat-item" data-cat="jewelry" onclick="setCategory('jewelry')"><div class="cat-circle">💍</div>ज्वेलरी</div>
+        <div class="cat-item" data-cat="shoes" onclick="setCategory('shoes')"><div class="cat-circle">👟</div>जूते</div>
+        <div class="cat-item" data-cat="beauty" onclick="setCategory('beauty')"><div class="cat-circle">💄</div>ब्यूटी</div>
+        <div class="cat-item" data-cat="bags" onclick="setCategory('bags')"><div class="cat-circle">👜</div>बैग्स</div>
     </div>
 
     <!-- Product Grid -->
@@ -223,6 +261,30 @@
         <h2 class="section-title">आपके लिए बेहतरीन प्रोडक्ट्स</h2>
         <div class="product-grid" id="productGrid">
             <div id="loading">प्रोडक्ट्स लोड हो रहे हैं...</div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cartPanel" class="sp-overlay">
+        <div class="sp-top">
+            <span class="back-arrow" onclick="closeCart()">←</span>
+            <span class="checkout-title">My Cart (<span id="cartCountTitle">0</span>)</span>
+        </div>
+        <div id="cartItems"></div>
+        <div id="cartFooter" class="cart-footer" style="display:none;">
+            <div><div class="cart-total-label">कुल राशि</div><div class="cart-total-amt" id="cartTotal">₹0</div></div>
+            <button class="cart-checkout-btn" onclick="cartCheckout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Wishlist Overlay -->
+    <div id="wishlistPanel" class="sp-overlay">
+        <div class="sp-top">
+            <span class="back-arrow" onclick="closeWishlist()">←</span>
+            <span class="checkout-title">Liked Products</span>
+        </div>
+        <div style="padding: 10px;">
+            <div class="product-grid" id="wishlistGrid"></div>
         </div>
     </div>
 
@@ -240,23 +302,20 @@
             return url;
         }
 
-        // Firebase से सारे प्रोडक्ट मंगाना
-        fetch(`${FIREBASE_DB_URL}/products.json`)
-        .then(response => response.json())
-        .then(data => {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = ''; // लोडिंग टेक्स्ट हटाना
+        let allProducts = {};
 
-            if (data) {
-                // डेटाबेस के सारे प्रोडक्ट को एक-एक करके पेज पर लगाना
-                for (let key in data) {
-                    let product = data[key];
-                    
-                    // अगर प्रोडक्ट में इमेज है, तो पहली इमेज लें, वरना खाली रखें
-                    let imgUrl = (product.images && product.images.length > 0) ? getDirectImageUrl(product.images[0]) : '';
+        // ---- Wishlist (localStorage: meeshoWishlist = [ids]) ----
+        const WISH_KEY = 'meeshoWishlist';
+        function loadWishlist() { try { const w = JSON.parse(localStorage.getItem(WISH_KEY)); return Array.isArray(w) ? w.map(String) : []; } catch (e) { return []; } }
+        function saveWishlist(w) { try { localStorage.setItem(WISH_KEY, JSON.stringify(w)); } catch (e) { console.error(e); } }
 
-                    let cardHtml = `
+        function buildCard(product) {
+            const liked = loadWishlist().includes(String(product.id));
+            // अगर प्रोडक्ट में इमेज है, तो पहली इमेज लें, वरना खाली रखें
+            let imgUrl = (product.images && product.images.length > 0) ? getDirectImageUrl(product.images[0]) : '';
+            return `
                         <a href="product.html?id=${product.id}" class="product-card">
+                            <span class="wl-btn ${liked ? 'liked' : ''}" data-id="${product.id}" onclick="toggleWishlist(event, this)"><svg width="18" height="18" viewBox="0 0 24 24" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></span>
                             <img src="${imgUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200?text=No+Image'">
                             <div class="pc-details">
                                 <div class="pc-title">${product.name}</div>
@@ -269,8 +328,135 @@
                             </div>
                         </a>
                     `;
-                    grid.innerHTML += cardHtml; // ग्रिड में जोड़ना
-                }
+        }
+
+        function toggleWishlist(e, el) {
+            e.preventDefault(); e.stopPropagation();
+            const id = String(el.getAttribute('data-id'));
+            let w = loadWishlist();
+            const nowLiked = !w.includes(id);
+            w = nowLiked ? w.concat(id) : w.filter(x => x !== id);
+            saveWishlist(w);
+            document.querySelectorAll('.wl-btn').forEach(b => {
+                if (String(b.getAttribute('data-id')) === id) b.classList.toggle('liked', nowLiked);
+            });
+            if (document.getElementById('wishlistPanel').style.display === 'block') renderWishlist();
+        }
+        function renderWishlist() {
+            const grid = document.getElementById('wishlistGrid');
+            const ids = loadWishlist();
+            let html = '', n = 0;
+            ids.forEach(id => {
+                const p = findProductById(id);
+                if (p) { html += buildCard(p); n++; }
+            });
+            if (n === 0) {
+                grid.innerHTML = '<div class="cart-empty" style="grid-column: span 2;">' + (Object.keys(allProducts).length || ids.length === 0 ? 'अभी कोई प्रोडक्ट लाइक नहीं किया गया है।' : 'प्रोडक्ट्स लोड हो रहे हैं...') + '</div>';
+            } else { grid.innerHTML = html; }
+        }
+        function findProductById(id) {
+            for (const k in allProducts) { const p = allProducts[k]; if (p && String(p.id) === String(id)) return p; }
+            return null;
+        }
+        function openWishlist() { renderWishlist(); document.getElementById('wishlistPanel').style.display = 'block'; }
+        function closeWishlist() { document.getElementById('wishlistPanel').style.display = 'none'; }
+
+        // ---- Cart (localStorage: meeshoCart) ----
+        const CART_KEY = 'meeshoCart';
+        function loadCart() { try { const c = JSON.parse(localStorage.getItem(CART_KEY)); return Array.isArray(c) ? c : []; } catch (e) { return []; } }
+        function saveCart(c) { try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch (e) { console.error(e); } }
+        function escHtml(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+        function updateCartBadge() {
+            const total = loadCart().reduce((a, i) => a + (i.qty || 1), 0);
+            const b = document.getElementById('cartBadge');
+            b.innerText = total;
+            b.style.display = total > 0 ? '' : 'none';
+        }
+        function renderCart() {
+            const cart = loadCart();
+            const box = document.getElementById('cartItems');
+            const footer = document.getElementById('cartFooter');
+            document.getElementById('cartCountTitle').innerText = cart.reduce((a, i) => a + (i.qty || 1), 0);
+            if (cart.length === 0) {
+                box.innerHTML = '<div class="cart-empty">आपका कार्ट खाली है</div>';
+                footer.style.display = 'none';
+                return;
+            }
+            let total = 0;
+            box.innerHTML = cart.map((it, idx) => {
+                total += (it.price || 0) * (it.qty || 1);
+                return `<div class="cart-item">
+                    <a href="product.html?id=${encodeURIComponent(it.id)}"><img src="${escHtml(it.image)}" alt=""></a>
+                    <div class="cart-info">
+                        <div class="cart-name">${escHtml(it.name)}</div>
+                        <div><span class="r-price">₹${escHtml(it.price)}</span><span class="r-mrp">₹${escHtml(it.mrp)}</span><span class="r-discount">${escHtml(it.discount)}% छूट</span></div>
+                        <div class="r-extra">साइज़: ${escHtml(it.size)}</div>
+                        <div class="cart-actions">
+                            <div class="qty-box"><button onclick="cartChange(${idx}, -1)">−</button><span>${it.qty || 1}</span><button onclick="cartChange(${idx}, 1)">+</button></div>
+                            <span class="cart-remove" onclick="cartRemove(${idx})">हटाएं</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            document.getElementById('cartTotal').innerText = `₹${total}`;
+            footer.style.display = 'flex';
+        }
+        function cartChange(idx, d) {
+            const cart = loadCart();
+            if (!cart[idx]) return;
+            cart[idx].qty = Math.max(1, (cart[idx].qty || 1) + d);
+            saveCart(cart); renderCart(); updateCartBadge();
+        }
+        function cartRemove(idx) {
+            const cart = loadCart(); cart.splice(idx, 1);
+            saveCart(cart); renderCart(); updateCartBadge();
+        }
+        function cartCheckout() {
+            const cart = loadCart();
+            if (cart.length === 0) return;
+            // मौजूदा checkout flow product.html पर है; पहले आइटम के पेज पर भेजें
+            window.location.href = 'product.html?id=' + encodeURIComponent(cart[0].id);
+        }
+        function openCart() { renderCart(); document.getElementById('cartPanel').style.display = 'block'; }
+        function closeCart() { document.getElementById('cartPanel').style.display = 'none'; }
+        updateCartBadge();
+        window.addEventListener('pageshow', updateCartBadge);
+        window.addEventListener('storage', function() { updateCartBadge(); });
+
+        // ---- Search + Category (client-side, instant) ----
+        let currentCategory = 'all';
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-item').forEach(el => el.classList.toggle('active', el.getAttribute('data-cat') === cat));
+            applyFilters();
+        }
+        function applyFilters() {
+            const grid = document.getElementById('productGrid');
+            const words = document.getElementById('homeSearch').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+            let html = '', n = 0;
+            for (const key in allProducts) {
+                const p = allProducts[key];
+                if (!p) continue;
+                if (currentCategory !== 'all' && p.category !== currentCategory) continue;
+                const name = String(p.name || '').toLowerCase();
+                if (!words.every(w => name.includes(w))) continue;
+                html += buildCard(p); n++;
+            }
+            grid.innerHTML = n ? html : '<div style="grid-column: span 2; text-align: center; padding: 30px 0; color: #888;">कोई प्रोडक्ट नहीं मिला।</div>';
+        }
+        document.getElementById('homeSearch').addEventListener('input', applyFilters);
+
+        // Firebase से सारे प्रोडक्ट मंगाना
+        fetch(`${FIREBASE_DB_URL}/products.json`)
+        .then(response => response.json())
+        .then(data => {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = ''; // लोडिंग टेक्स्ट हटाना
+
+            if (data) {
+                allProducts = data;
+                applyFilters();
+                if (document.getElementById('wishlistPanel').style.display === 'block') renderWishlist();
             } else {
                 grid.innerHTML = '<div style="grid-column: span 2; text-align: center;">अभी तक कोई प्रोडक्ट नहीं डाला गया है।</div>';
             }
